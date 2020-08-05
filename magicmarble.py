@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Choose an open pin connected to the Data In of the NeoPixel strip, i.e. board.D18
 # NeoPixels must be connected to D10, D12, D18 or D21 to work.
-pixel_pin = board.D18
+pixel_pin = board.D21
 
 # The number of NeoPixels
 num_pixels = 20
@@ -146,108 +146,93 @@ def wheel2(pos):
 
 
 def rainbow_cycle(wait):
-    for j in range(255):
-        for i in range(num_pixels):
-            pixel_index = (i * 255 // num_pixels) + j
-            pixels[i] = wheel(pixel_index & 255)
+    for i in range(255):
+        for j in range(num_pixels):
+            pixel_index = (j * 255 // num_pixels) + i
+            pixels[j] = wheel(pixel_index & 255)
         pixels.show()
         time.sleep(wait)
 
 def rainbow_cycle2(wait):
-    for j in range(765):
-        for i in range(num_pixels):
-            pixel_index = (i // num_pixels) + j
-            pixels[i] = wheel2(pixel_index)
+    for i in range(765):
+        for j in range(num_pixels):
+            pixel_index = (j // num_pixels) + i
+            pixels[j] = wheel2(pixel_index)
         pixels.show()
         time.sleep(wait)
         
 def rainbow(wait):
-    for j in range(255):
-        for i in range(num_pixels):
-            pixels[i] = wheel((i // num_pixels)+j)
+    for i in range(255):
+        for j in range(num_pixels):
+            pixels[j] = wheel((j // num_pixels)+i)
         pixels.show()
         time.sleep(wait)
 
 def glow(num):
-    for j in range(num):
-        if j < num:
-            for i in range(2000) :
-                if i < 1000:
-                    pixels.brightness = 0.001*i
-                    pixels.show()
-                elif i <2000:
-                    i = i - 2000
-                    pixels.brightness = 0.001*abs(i)
-                    pixels.show()
-        elif j == num :
-            time.sleep(1)
+    for i in range(num):
+        for j in range(1000) :
+            if j < 500:
+                pixels.brightness = 0.002*j
+                pixels.show()
+            else:
+                pixels.brightness = 0.002*abs(1000-j)
+                pixels.show()
+            time.sleep(0.001)
             
 def glow2(num):
-    for j in range(num):
-        if j < num:
-            for i in range(1000) :
-                if i < 500:
-                    pixels.brightness = 0.002*i
-                    pixels.show()
-                elif i <1000:
-                    i = i - 1000
-                    pixels.brightness = 0.002*abs(i)
-                    pixels.show()
-        elif j == num :
-            time.sleep(1)
+    for i in range(num):
+        for j in range(500) :
+            if j < 250:
+                pixels.brightness = 0.004*j
+                pixels.show()
+            else:
+                pixels.brightness = 0.004*abs(500-j)
+                pixels.show()
+            time.sleep(0.001)
 
 def fastglow(num):
-    for j in range(num):
-        if j < num:
-            for i in range(500):
-                if i < 250:
-                    pixels.brightness = 0.04*i
-                    pixels.show()
-                elif i < 500:
-                    i = i - 500
-                    pixels.brightness = 0.04*abs(i)
-                    pixels.show()
-        elif j == num :
-            time.sleep(1)
+    for i in range(num):
+        for j in range(200) :
+            if j < 100:
+                pixels.brightness = 0.01*j
+                pixels.show()
+            else:
+                pixels.brightness = 0.01*abs(200-j)
+                pixels.show()
+            time.sleep(0.001)
             
 def impact(num):
     for j in range(num):
-        if j < num:
-            for i in range(250):
-                if i < 240:
-                    pixels.brightness = 0.1
-                    pixels.show()
-                elif i < 250:
-                    pixels.brightness = 1
-                    pixels.show()
-        elif j == num:
-            time.sleep(1)
+        for i in range(250):
+            if i < 240:
+                pixels.brightness = 0.1
+                pixels.show()
+            elif i < 250:
+                pixels.brightness = 1
+                pixels.show()
+            time.sleep(0.001)
             
 def impact2(num):
     for j in range(num):
-        if j < num:
-            for i in range(250):
-                if i < 240:
-                    pixels.brightness = 0.3
-                    pixels.show()
-                elif i < 250:
-                    pixels.brightness = 1
-                    pixels.show()
-        elif j == num:
-            time.sleep(1)
+        for i in range(250):
+            if i < 240:
+                pixels.brightness = 0.3
+                pixels.show()
+            elif i < 250:
+                pixels.brightness = 1
+                pixels.show()
+            time.sleep(0.001)
             
 def impact3(num):
     for j in range(num):
-        if j < num:
-            for i in range(250):
-                if i < 240:
-                    pixels.brightness = 0.5
-                    pixels.show()
-                elif i < 250:
-                    pixels.brightness = 1
-                    pixels.show()
-        elif j == num:
-            sleep(1)
+        for i in range(250):
+            if i < 240:
+                pixels.brightness = 0.5
+                pixels.show()
+            elif i < 250:
+                pixels.brightness = 1
+                pixels.show()
+            time.sleep(0.001)
             
 def sound1():
     VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound1.wav")
