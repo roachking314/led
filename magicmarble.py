@@ -4,8 +4,7 @@ import board
 import neopixel
 from omxplayer.player import OMXPlayer
 from pathlib import Path
-
-
+import pygame
 # Choose an open pin connected to the Data In of the NeoPixel strip, i.e. board.D18
 # NeoPixels must be connected to D10, D12, D18 or D21 to work.
 pixel_pin = board.D21
@@ -21,85 +20,92 @@ pixels = neopixel.NeoPixel(
     pixel_pin, num_pixels, bpp=4, brightness=1, auto_write=False, pixel_order=ORDER
 )
 
-def changeRed(delay):
+
+def turnOff():
+    global pixels
+    for z in range(20):
+        pixels[z] = (0,0,0)
+    pixels.show()
+
+def changeRed():
     global pixels
     for z in range(num_pixels):
         pixels[z] = (0,255,0,0)
         pixels.show()
-    time.sleep(int(delay))
-    #turnOff()
+    time.sleep(0.001)
+
     
-def changeBlue(delay):
+def changeBlue():
     global pixels
     for z in range(num_pixels):
         pixels[z] = (0,0,255,0)
         pixels.show()
-    time.sleep(int(delay))
-    #turnOff()
+    time.sleep(1)
+
     
-def changeGreen(delay):
+def changeGreen():
     global pixels
     for z in range(num_pixels):
         pixels[z] = (255,0,0,0)
         pixels.show()
-    time.sleep(int(delay))
-    #turnOff()
+    time.sleep(1)
+
     
-def changeYellow(delay):
+def changeYellow():
     global pixels
     for z in range(num_pixels):
         pixels[z] = (255,255,0,0)
         pixels.show()
-    time.sleep(int(delay))
-    #turnOff()
+    time.sleep(1)
+
     
-def changePurple(delay):
+def changePurple():
     global pixels
     for z in range(num_pixels):
         pixels[z] = (72,162,255,0)
         pixels.show()
-    time.sleep(int(delay))
-    #turnOff()
+    time.sleep(1)
+
     
-def changeOrange(delay):
+def changeOrange():
     global pixels
     for z in range(num_pixels):
         pixels[z] = (127,255,0,0)
         pixels.show()
-    time.sleep(int(delay))
-    #turnOff()
+    time.sleep(1)
+
     
-def changePurple(delay):
+def changePurple():
     global pixels
     for z in range(num_pixels):
         pixels[z] = (0,139,255,0)
         pixels.show()
-    time.sleep(int(delay))
-    #turnOff()
+    time.sleep(1)
+
     
-def changePink(delay):
+def changePink():
     global pixels
     for z in range(num_pixels):
         pixels[z] = (51,255,153,0)
         pixels.show()
-    time.sleep(int(delay))
-    #turnOff()
+    time.sleep(1)
+
     
-def changeSkyblue(delay):
+def changeSkyblue():
     global pixels
     for z in range(num_pixels):
         pixels[z] = (255,0,255,0)
         pixels.show()
-    time.sleep(int(delay))
-    #turnOff()
+    time.sleep(1)
+
     
-def changeWhite(delay):
+def changeWhite():
     global pixels
     for z in range(num_pixels):
         pixels[z] = (0,0,0,255)
         pixels.show()
-    time.sleep(int(delay))
-    #turnOff()
+    time.sleep(1)
+
 
 def wheel(pos):
     # Input a value 0 to 255 to get a color value.
@@ -120,208 +126,153 @@ def wheel(pos):
         r = 0
         g = int(pos*3)
         b = int(255 - pos*3)
-    return (g, r, b) if ORDER in (neopixel.RGB, neopixel.GRB) else (g, r, b, 0)
+    return (r, g, b) if ORDER in (neopixel.RGB, neopixel.GRB) else (r, g, b, 0)
 
 
-def wheel2(pos):
-    # Input a value 0 to 255 to get a color value.
-    # The colours are a transition r - g - b - back to r.
-    if pos < 0 or pos > 765:
-        r = g = b = 0
-    elif pos < 255:
-        r = int(pos)
-        g = int(255 - pos)
-        b = 0
-    elif pos < 510:
-        pos = pos - 255
-        r = int(255 - pos)
-        g = 0
-        b = int(pos)
-    else:
-        pos = pos - 510
-        r = 0
-        g = int(pos)
-        b = int(255 - pos)
-    return (g, r, b) if ORDER in (neopixel.RGB, neopixel.GRB) else (g, r, b, 0)
+def rainbow(num):
+    for i in range(num):
+        for j in range(255):
+            for k in range(num_pixels):
+                pixels[k] = wheel((k // num_pixels)+j)
+            pixels.show()
+            time.sleep(0.01)
 
+def rainbow2(num):
+    for i in range(num):
+        for j in range(255):
+            for k in range(num_pixels):
+                pixel_index = (k * 255 // num_pixels) + j
+                pixels[k] = wheel(pixel_index & 255)
+            pixels.show()
+            time.sleep(0.01)
 
-def rainbow_cycle(wait):
-    for i in range(255):
-        for j in range(num_pixels):
-            pixel_index = (j * 255 // num_pixels) + i
-            pixels[j] = wheel(pixel_index & 255)
-        pixels.show()
-        time.sleep(wait)
-
-def rainbow_cycle2(wait):
-    for i in range(765):
-        for j in range(num_pixels):
-            pixel_index = (j // num_pixels) + i
-            pixels[j] = wheel2(pixel_index)
-        pixels.show()
-        time.sleep(wait)
-        
-def rainbow(wait):
-    for i in range(255):
-        for j in range(num_pixels):
-            pixels[j] = wheel((j // num_pixels)+i)
-        pixels.show()
-        time.sleep(wait)
 
 def glow(num):
+    for i in range(num):
+        for j in range(2000) :
+            if j < 1000:
+                pixels.brightness = 0.001*j
+                pixels.show()
+            elif j <2000:
+                pixels.brightness = 0.001*abs(j-2000)
+                pixels.show()
+            
+def glow2(num):
     for i in range(num):
         for j in range(1000) :
             if j < 500:
                 pixels.brightness = 0.002*j
                 pixels.show()
-            else:
-                pixels.brightness = 0.002*abs(1000-j)
+            elif j <1000:
+                pixels.brightness = 0.002*abs(j-1000)
                 pixels.show()
-            time.sleep(0.001)
-            
-def glow2(num):
-    for i in range(num):
-        for j in range(500) :
-            if j < 250:
-                pixels.brightness = 0.004*j
-                pixels.show()
-            else:
-                pixels.brightness = 0.004*abs(500-j)
-                pixels.show()
-            time.sleep(0.001)
 
 def fastglow(num):
     for i in range(num):
-        for j in range(200) :
-            if j < 100:
-                pixels.brightness = 0.01*j
+        for j in range(500) :
+            if j < 250:
+                pixels.brightness = 0.04*j
                 pixels.show()
-            else:
-                pixels.brightness = 0.01*abs(200-j)
+            elif j <500:
+                pixels.brightness = 0.04*abs(j-500)
                 pixels.show()
-            time.sleep(0.001)
-            
+                
 def impact(num):
-    for j in range(num):
-        for i in range(250):
-            if i < 240:
+    for i in range(num):
+        for j in range(250):
+            if j < 240:
                 pixels.brightness = 0.1
                 pixels.show()
-            elif i < 250:
+            else:
                 pixels.brightness = 1
                 pixels.show()
-            time.sleep(0.001)
             
 def impact2(num):
-    for j in range(num):
-        for i in range(250):
-            if i < 240:
+    for i in range(num):
+        for j in range(250):
+            if j < 240:
                 pixels.brightness = 0.3
                 pixels.show()
-            elif i < 250:
+            else:
                 pixels.brightness = 1
                 pixels.show()
-            time.sleep(0.001)
             
 def impact3(num):
-    for j in range(num):
-        for i in range(250):
-            if i < 240:
+    for i in range(num):
+        for j in range(250):
+            if j < 240:
                 pixels.brightness = 0.5
                 pixels.show()
-            elif i < 250:
+            else:
                 pixels.brightness = 1
                 pixels.show()
-            time.sleep(0.001)
-            
+
 def sound1():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound1.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
-    
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound1.mp3')
+    pygame.mixer.music.play()
+
 def sound2():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound2.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
-
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound2.mp3')
+    pygame.mixer.music.play()
+    
 def sound3():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound3.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
-
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound3.mp3')
+    pygame.mixer.music.play()
+    
 def sound4():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound4.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound4.mp3')
+    pygame.mixer.music.play()
     
 def sound5():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound5.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound5.mp3')
+    pygame.mixer.music.play()
     
 def sound6():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound6.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound6.mp3')
+    pygame.mixer.music.play()
     
 def sound7():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound7.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound7.mp3')
+    pygame.mixer.music.play()
     
 def sound8():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound8.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound8.mp3')
+    pygame.mixer.music.play()
     
 def sound9():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound9.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound9.mp3')
+    pygame.mixer.music.play()
     
 def sound10():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound10.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound10.mp3')
+    pygame.mixer.music.play()
     
 def sound11():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound11.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound11.mp3')
+    pygame.mixer.music.play()
     
 def sound12():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound12.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound12.mp3')
+    pygame.mixer.music.play()
     
 def sound13():
-    VIDEO_PATH = Path("/home/pi/magicmarble/sound/sound13.wav")
-    player = OMXPlayer(VIDEO_PATH)
-    player.play()
-    sleep(5)
-    player.quit()
- 
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound13.mp3')
+    pygame.mixer.music.play()
+    
+def sound14():
+    pygame.mixer.init()
+    pygame.mixer.music.load('/home/pi/magicmarble/sound/sound14.mp3')
+    pygame.mixer.music.play()
